@@ -4,12 +4,14 @@
 
 {% block head %}
 {{ super() }}
+<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
-<script src={{ url_for('send_static', path='js/sketch.js') }}></script>
+<script type="module" src={{ url_for('send_static', path='js/sketch.js') }}></script>
 <script src={{ url_for('send_static', path='js/loadbinary.js') }}></script>
 <script src={{ url_for('send_static', path='js/nn.js') }}></script>
 <script src={{ url_for('send_static', path='js/matrix.js') }}></script>
+<!-- <script type="module" src="./node_modules/axios/dist/axios.min.js"></script> -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 {% endblock head %}
 

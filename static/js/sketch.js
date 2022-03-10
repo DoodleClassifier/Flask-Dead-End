@@ -1,36 +1,26 @@
+import axios from "axios";
+
 const len = 784;
 const total_data = 1000;
 const canvas_width = 400;
 const canvas_height = 400;
 
-// var fs = require('fs'), 
-// const { RandomForestClassifier } = require('random-forest-classifier');
-
-let test_objs = null;
-
-fetch('/get-objects')
-    .then(function (response) {
-        return response.json();
-    }).then(function (data) {
-      console.log(data.objects)
-        // test_objs = JSON.parse(data.objects)
-        test_objs = new Map(Object.entries(this.props.json))
-    })
-
-console.log("Test objs:")
-console.log(test_objs)
-
 const objects = new Map([
-  [0, "Broom"],
-  [1, "Door"],
-  [2, "Mailbox"],
-  [3, "Pencil"],
-  [4, "Rainbow"],
-  [5, "Sailboat"],
-  [6, "Star"]
+  [0, "Bowtie"],
+  [1, "Crown"],
+  [2, "Crown"],
+  [3, "EiffelTower"],
+  [4, "HitAirBalloon"],
+  [5, "HousePlant"],
+  [6, "Bed"],
+  [7, "Cat"],
+  [8, "Couch"],
+  [9, "Dog"],
+  [10, "Hand"],
+  [11, "Hat"],
+  [12, "Tractor"],
 ]);
 
-console.log(objects)
 
 // Stores the binary files' information of the doodles
 let object_data = [];
@@ -65,6 +55,19 @@ function prepareData(category, data, label) {
       category.testing[i - threshold].label = label;
     }
   }
+}
+
+// Wrapper for making an API call and waiting for result
+function makeGetRequest(path) {
+  axios.get(path).then(
+      (response) => {
+          var result = response.data;
+          return (result);
+      },
+      (error) => {
+          console.log(error);
+      }
+  );
 }
 
 function trainEpoch(training) {
@@ -165,9 +168,9 @@ function guess() {
     inputs[i] = bright / 255.0;
   }
 
-  let guess = nn.predict(inputs);
+  let guess = makeGetRequest("/predict/" + inputs)
+
   let m = max(guess);
-  // let classification = guess.indexOf(m);
 
   let guessDiv = select("#guessDiv");
 
@@ -200,9 +203,7 @@ function setup() {
   }
 
   // Make nn object, 784 inputs (one per pixel value), 64 nodes in hidden layer, x outputs for all objects
-  
-  nn = new NeuralNetwork(784, 60, objects.size);
-    // nn = RandomForestClassifier(200);
+  // nn = new NeuralNetwork(784, 60, objects.size);
 
   // Preparing the data
   let training = [];
@@ -216,7 +217,6 @@ function setup() {
   }
 
   let trainButton = select('#train');
-  // let trainButton = createButton("Train").parent("trainDiv");
   let epochCounter = 0;
   trainButton.mousePressed(function () {
     trainEpoch(testing);
@@ -225,7 +225,6 @@ function setup() {
   });
 
   let testButton = select('#test');
-  // let testButton = createButton("Test").parent("testDiv");
   testButton.mousePressed(function () {
     let percent = testAll(testing);
     console.log("Percent: " + formatDecimal(percent) + "%");
@@ -248,19 +247,10 @@ function setup() {
   });
 
   let clearButton = select('#clear');
-  // let clearButton = createButton("Clear").parent("clearDiv");
   clearButton.mousePressed(function () {
     background(0);
     zeroGuess();
   });
-
-  fetch('/test-model')
-    .then(function (response) {
-        return response.json();
-    }).then(function (predictions) {
-        console.log("Done testing!");
-        console.log(predictions)
-    })
 }
 
 // Draw function of p5.js library, this function is run each frame to check for updates
@@ -271,14 +261,3 @@ function draw() {
     line(pmouseX, pmouseY, mouseX, mouseY);
   }
 }
-
-
-/*
-Notes for improvements:
-- convolutional layer before final layer
-- softmax 
-- cross entropy
-
-*/
-
-
