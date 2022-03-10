@@ -1,0 +1,4 @@
+# Flask-Dead-End
+Attempt at making web page communicate with the python model.
+
+After experimenting a bit, I realized that using Flask to communicate with python scripts was not the solution I wanted. Making fetch calls to the python script through the Flask API was simply too slow. For example, I wanted to initialize my javascript map of objects to the list defined in python. However using a fetch to retrieve that data resulted in the variable being instantiated about half a second after the initial call. This resulted in subsequent functions analyzing the objects parameter as "null" since they executed faster than the fetch command. I think from here I will try out python guis since that seems to be the fastest method of communication with the python model, and also because dealing with web development makes me want to pull my hair out.
